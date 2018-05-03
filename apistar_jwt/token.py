@@ -87,7 +87,7 @@ class JWT(Component):
                ' See https://github.com/audiolion/apistar-jwt#Setup')
         raise ConfigurationError(msg)
 
-    def resolve(self, authorization: http.Header, route: Route, parameter: inspect.Parameter
+    def resolve(self, auth: http.Header, route: Route, parameter: inspect.Parameter
                 ) -> Union[_JWT, JWTUser, None]:
         authentication_required = getattr(route.handler, 'authenticated', True)
         jwt = _JWT(self.settings)
@@ -95,9 +95,9 @@ class JWT(Component):
             return jwt
         if route.handler.__name__ in self.settings["white_list"]:
             return None
-        if authorization is None and not authentication_required:
+        if auth is None and not authentication_required:
             return None
-        token = get_token_from_header(authorization)
+        token = get_token_from_header(auth)
         jwt_user = jwt.decode(token)
         if jwt_user is None:
             raise AuthenticationFailed()
